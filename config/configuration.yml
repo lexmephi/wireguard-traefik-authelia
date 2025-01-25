@@ -1,17 +1,17 @@
 ---
 server:
-  address: 'tcp://:9091'
+  address: "tcp://:9091"
 
 log:
-  level: 'debug'
+  level: "debug"
 
 totp:
   disable: false
-  issuer: 'authelia.com'
+  issuer: "authelia.com"
 
 authentication_backend:
   file:
-    path: '/config/users_database.yml'
+    path: "/config/users_database.yml"
 
 # https://www.authelia.com/configuration/security/access-control/
 access_control:
@@ -24,36 +24,36 @@ access_control:
 
 session:
   cookies:
-    - name: 'authelia_session'
+    - name: "authelia_session"
       domain: '{{ env "MY_DOMAIN" }}'
       authelia_url: 'https://auth.{{ env "MY_DOMAIN" }}'
-      expiration: '1 hour'
-      inactivity: '5 minutes'
+      expiration: "1 hour"
+      inactivity: "5 minutes"
 
   redis:
-    host: 'authelia_redis'
+    host: "redis"
     port: 6379
 
 regulation:
   max_retries: 3
-  find_time: '2 minutes'
-  ban_time: '5 minutes'
+  find_time: "2 minutes"
+  ban_time: "5 minutes"
 
 telemetry:
   metrics:
     enabled: false
-    address: 'tcp://:9959/metrics'
+    address: "tcp://:9959/metrics"
     buffers:
       read: 4096
       write: 4096
     timeouts:
-      read: '6s'
-      write: '6s'
-      idle: '30s'
+      read: "6s"
+      write: "6s"
+      idle: "30s"
 
 storage:
   local:
-    path: '/config/db.sqlite3'
+    path: "/config/db.sqlite3"
 
 notifier:
   filesystem:
