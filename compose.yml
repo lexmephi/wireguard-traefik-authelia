@@ -4,9 +4,6 @@ networks:
     name: traefik_network
   redis_network:
     name: redis_network
-  wireguard_network:
-    name: wireguard_network
-    driver: bridge
 
 volumes:
   traefik_data:
@@ -23,7 +20,7 @@ services:
     image: traefik:latest
     hostname: traefik
     container_name: traefik
-    restart: on-failure:3
+    restart: unless-stopped
     command:
       - "--log.level=INFO"
       - "--api.insecure=false"
@@ -93,7 +90,7 @@ services:
     image: authelia/authelia:latest
     container_name: authelia
     hostname: authelia
-    restart: on-failure:3
+    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_network
@@ -129,7 +126,7 @@ services:
     image: ghcr.io/wg-easy/wg-easy:latest
     container_name: wg-easy
     hostname: wg-easy
-    restart: on-failure:3
+    restart: unless-stopped
     labels:
       - com.centurylinklabs.watchtower.enable=true
       - traefik.enable=true
@@ -161,7 +158,6 @@ services:
       - wireguard_data:/etc/wireguard
     ports:
       - "51820:51820/udp"
-      - "51821:51821/tcp"
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -170,19 +166,15 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     networks:
       wireguard_network:
-      traefik_network:
 
   watchtower:
     image: containrrr/watchtower:latest
     container_name: watchtower
     hostname: watchtower
-    restart: on-failure:3
+    restart: unless-stopped
     labels:
       - com.centurylinklabs.watchtower.enable=true
       - traefik.enable=false
-    user: ${PUID:?error}:${PGID:?error}
-    group_add:
-      - 999
     environment:
       WATCHTOWER_CLEANUP: true
       WATCHTOWER_LABEL_ENABLE: true
@@ -194,23 +186,13 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/localtime:/etc/localtime:ro
 
-  init-change-ownership:
-    image: busybox:latest
-    command: chown -R ${PUID}:${PGID} /tmp/change-ownership
-    environment:
-      PUID: ${PUID:?error}
-      PGID: ${PGID:?error}
-    volumes:
-      - redis_data:/tmp/change-ownership
-
   redis:
     image: redis:latest
     container_name: redis
     hostname: redis
-    restart: on-failure:3
+    restart: unless-stopped
     labels:
       - com.centurylinklabs.watchtower.enable=true
-    user: ${PUID:?error}:${PGID:?error}
     volumes:
       - redis_data:/data
     networks:
