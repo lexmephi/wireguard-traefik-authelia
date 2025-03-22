@@ -4,6 +4,12 @@ networks:
     name: traefik_network
   redis_network:
     name: redis_network
+  wg:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.42.42.0/24
 
 volumes:
   traefik_data:
@@ -56,7 +62,7 @@ services:
       - "--entryPoints.websecure.forwardedHeaders.insecure=false"
       - "--entryPoints.websecure.proxyProtocol.insecure=false"
     labels:
-      - com.centurylinklabs.watchtower.enable=true
+     # - com.centurylinklabs.watchtower.enable=true
       - traefik.enable=true
       - traefik.docker.network=traefik_network
       - traefik.http.routers.api.tls=true
@@ -165,27 +171,28 @@ services:
       - net.ipv4.ip_forward=1
       - net.ipv4.conf.all.src_valid_mark=1
     networks:
-      wireguard_network:
+      - traefik_network
+      - wg
 
-  watchtower:
-    image: containrrr/watchtower:latest
-    container_name: watchtower
-    hostname: watchtower
-    restart: unless-stopped
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-      - traefik.enable=false
-    environment:
-      WATCHTOWER_CLEANUP: true
-      WATCHTOWER_LABEL_ENABLE: true
-      WATCHTOWER_HTTP_API_METRICS: true
-      WATCHTOWER_ROLLING_RESTART: true
-      WATCHTOWER_TIMEOUT: 30s
-      WATCHTOWER_SCHEDULE: "0 8 * * *"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /etc/localtime:/etc/localtime:ro
-
+#  watchtower:
+#    image: containrrr/watchtower:latest
+#    container_name: watchtower
+#    hostname: watchtower
+#    restart: unless-stopped
+#    labels:
+ #     - com.centurylinklabs.watchtower.enable=true
+#      - traefik.enable=false
+#    environment:
+#      WATCHTOWER_CLEANUP: true
+#      WATCHTOWER_LABEL_ENABLE: true
+#      WATCHTOWER_HTTP_API_METRICS: true
+#      WATCHTOWER_ROLLING_RESTART: true
+#      WATCHTOWER_TIMEOUT: 30s
+#      WATCHTOWER_SCHEDULE: "0 8 * * *"
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - /etc/localtime:/etc/localtime:ro
+#
   redis:
     image: redis:latest
     container_name: redis
