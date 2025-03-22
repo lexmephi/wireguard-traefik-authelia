@@ -26,7 +26,7 @@ Docker Compose stack to deploy a WireGuard VPN server ([wg-easy](https://github.
 
    ```bash
    RELEASE=0.0.1
-   curl -L -o wireguard-traefik-authelia-${RELEASE}.zip https://github.com/veerendra2/wireguard-traefik-authelia/archive/refs/tags/v${RELEASE}.zip
+   curl -L -o wireguard-traefik-authelia-${RELEASE}.zip https://github.com/lexmephi/wireguard-traefik-authelia/archive/refs/tags/${RELEASE}.zip
    unzip wireguard-traefik-authelia-${RELEASE}.zip
    cd wireguard-traefik-authelia-${RELEASE}
    ```
