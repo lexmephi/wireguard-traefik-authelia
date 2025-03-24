@@ -117,7 +117,7 @@ This setup has been tested with DuckDNS and Cloudflare. It should work with othe
    export MY_DOMAIN="YOUR_SUB_DOMAIN.YOUR_DOMAIN_NAME.com"
    export CLOUDFLARE_DNS_API_TOKEN="MY_CLOUDFLARE_TOKEN"
 
-   docker compose up -d
+   docker compose up -d && watch cat config/notification.txt
    ```
 
 ### Post-Deployment Setup
